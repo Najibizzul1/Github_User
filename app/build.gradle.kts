@@ -45,6 +45,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
     implementation("androidx.lifecycle:lifecycle-livedata:2.6.2")
+    implementation("androidx.fragment:fragment:1.6.1")
     implementation("com.github.bumptech.glide:glide:4.13.2")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.core:core-ktx:1.12.0")
