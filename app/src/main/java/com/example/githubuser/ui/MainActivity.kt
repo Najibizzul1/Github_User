@@ -22,57 +22,57 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         adapter = MainAdapter()
-        adapter.notifyDataSetChanged()
-
-        adapter.setOnItemClickCallBack(object : MainAdapter.OnItemClickCallBack{
+        adapter.setOnItemClickCallBack(object : MainAdapter.OnItemClickCallBack {
             override fun onItemClicked(data: User) {
-                Intent(this@MainActivity, DetailUserActivity::class.java).also {
-                    it.putExtra(DetailUserActivity.EXTRA_USERNAME, data.login)
-                    startActivity(it)
-                }
+                navigateToDetailUser(data.login)
             }
         })
-        viewModel= ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
 
-        binding.apply {
-            rvUser.layoutManager = LinearLayoutManager(this@MainActivity)
-            rvUser.setHasFixedSize(true)
-            rvUser.adapter = adapter
+        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
 
-            btnSearch.setOnClickListener{
-                searchUser()
-            }
+        setupRecyclerView()
+        setupSearchButton()
 
-            etQuery.setOnKeyListener { _, keyCode, event ->
-                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    searchUser()
-                    return@setOnKeyListener true
-                }
-                return@setOnKeyListener false
-            }
-        }
-        viewModel.getSearchUsers().observe(this, {
-            if (it!=null){
+        viewModel.getSearchUsers().observe(this, { users ->
+            users?.let {
                 adapter.setList(it)
                 showLoading(false)
             }
         })
     }
 
-    private fun searchUser(){
-        binding.apply {
-            val query = etQuery.text.toString()
-            if (query.isEmpty()) return
-            showLoading(true)
-            viewModel.setSearchUsers(query)
+    private fun setupRecyclerView() {
+        binding.rvUser.layoutManager = LinearLayoutManager(this)
+        binding.rvUser.setHasFixedSize(true)
+        binding.rvUser.adapter = adapter
+    }
+
+    private fun setupSearchButton() {
+        binding.btnSearch.setOnClickListener { searchUser() }
+
+        binding.etQuery.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                searchUser()
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
         }
     }
 
-    private fun showLoading(state: Boolean){
-        if (state){
-            binding.PB.visibility = View.VISIBLE
-        }else{
-            binding.PB.visibility = View.GONE
-        }
+    private fun searchUser() {
+        val query = binding.etQuery.text.toString()
+        if (query.isEmpty()) return
+        showLoading(true)
+        viewModel.setSearchUsers(query)
+    }
+
+    private fun showLoading(state: Boolean) {
+        binding.PB.visibility = if (state) View.VISIBLE else View.GONE
+    }
+
+    private fun navigateToDetailUser(username: String) {
+        val intent = Intent(this@MainActivity, DetailUserActivity::class.java)
+        intent.putExtra(DetailUserActivity.EXTRA_USERNAME, username)
+        startActivity(intent)
     }
 }

@@ -2,15 +2,10 @@ package com.example.githubuser.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.example.githubuser.R
-import com.example.githubuser.data.DetailUserViewModel
-import com.example.githubuser.data.SectionPagerAdapter
 import com.example.githubuser.databinding.ActivityDetailUserBinding
-import com.example.githubuser.databinding.ItemUserBinding
 
 class DetailUserActivity : AppCompatActivity() {
 
@@ -27,10 +22,8 @@ class DetailUserActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val username = intent.getStringExtra(EXTRA_USERNAME) ?:""
-
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())
             .get(DetailUserViewModel::class.java)
-
         viewModel.setUserDetail(username)
         viewModel.getUserDetail().observe(this,{
             if (it != null){
@@ -48,7 +41,10 @@ class DetailUserActivity : AppCompatActivity() {
             }
         })
 
-        val sectionPagerAdapter = SectionPagerAdapter(this, supportFragmentManager)
+        val bundle =Bundle()
+        bundle.putString(EXTRA_USERNAME, username)
+
+        val sectionPagerAdapter = SectionPagerAdapter(this, supportFragmentManager, bundle)
         binding.apply {
             vp.adapter = sectionPagerAdapter
             tabs.setupWithViewPager(vp)

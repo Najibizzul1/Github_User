@@ -6,39 +6,35 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.githubuser.api.RetrofitClient
 import com.example.githubuser.data.User
-import com.example.githubuser.data.UserRespons
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainViewModel : ViewModel(){
+class FollowingViewModel: ViewModel() {
+    val listFollowing = MutableLiveData<ArrayList<User>>()
 
-    private val listUsers = MutableLiveData<ArrayList<User>>()
-
-    fun getSearchUsers(): LiveData<ArrayList<User>>{
-        return listUsers
-    }
-
-    fun setSearchUsers(query: String){
+    fun setlistFollowing(username: String){
         RetrofitClient.apiInstance
-            .getSearchUsers(query)
-            .enqueue(object : Callback<UserRespons>{
+            .getFollowing(username)
+            .enqueue(object : Callback<List<User>>{
                 override fun onResponse(
-                    call: Call<UserRespons>,
-                    response: Response<UserRespons>
+                    call: Call<List<User>>,
+                    response: Response<List<User>>
                 ) {
                     if (response.isSuccessful){
-                        listUsers.postValue(response.body()?.items)
+                        listFollowing.postValue(response.body() as ArrayList<User>?)
                     }
                 }
 
-                override fun onFailure(call: Call<UserRespons>, t: Throwable) {
+                override fun onFailure(call: Call<List<User>>, t: Throwable) {
                     Log.d("Network Failure", t.message!!)
                 }
 
             })
     }
 
-
+    fun getListFollowing(): LiveData<ArrayList<User>>{
+        return listFollowing
+    }
 }
 

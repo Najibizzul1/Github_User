@@ -1,6 +1,6 @@
 package com.example.githubuser.data
 
-data class DetaiUserResponse(
+data class DetailUserResponse(
     val login : String,
     val id : Int,
     val avatar_url :String,
