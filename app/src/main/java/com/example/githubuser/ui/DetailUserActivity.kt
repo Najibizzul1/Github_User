@@ -2,6 +2,7 @@ package com.example.githubuser.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -25,6 +26,7 @@ class DetailUserActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())
             .get(DetailUserViewModel::class.java)
         viewModel.setUserDetail(username)
+        showLoading(true)
         viewModel.getUserDetail().observe(this,{
             if (it != null){
                 binding.apply{
@@ -37,6 +39,7 @@ class DetailUserActivity : AppCompatActivity() {
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .centerCrop()
                         .into(ivProfile)
+                    showLoading(false)
                 }
             }
         })
@@ -49,5 +52,8 @@ class DetailUserActivity : AppCompatActivity() {
             vp.adapter = sectionPagerAdapter
             tabs.setupWithViewPager(vp)
         }
+    }
+    private fun showLoading(state: Boolean) {
+        binding.PB.visibility = if (state) View.VISIBLE else View.GONE
     }
 }
