@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())
+            .get(MainViewModel::class.java)
 
         setupRecyclerView()
         setupSearchButton()
@@ -39,6 +40,8 @@ class MainActivity : AppCompatActivity() {
                 showLoading(false)
             }
         })
+
+        viewModel.setSearchUsers("all")
     }
 
     private fun setupRecyclerView() {
