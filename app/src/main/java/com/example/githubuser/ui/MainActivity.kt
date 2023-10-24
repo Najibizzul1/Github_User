@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuser.data.User
@@ -21,10 +22,23 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val themeViewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(application)
+        )[ThemeViewModel::class.java]
+
+        themeViewModel.getThemeSettings().observe(this) { isDarkMode: Boolean ->
+            if (isDarkMode) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
+
         adapter = MainAdapter()
         adapter.setOnItemClickCallBack(object : MainAdapter.OnItemClickCallBack {
             override fun onItemClicked(data: User) {
-                navigateToDetailUser(data.login)
+                navigateToDetailUser(data.login, data.avatar_url)
             }
         })
 
@@ -42,6 +56,18 @@ class MainActivity : AppCompatActivity() {
         })
 
         viewModel.setSearchUsers("all")
+
+        binding.btnFav.setOnClickListener {
+            Intent(this, FavoriteActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+
+        binding.btnTheme.setOnClickListener {
+            Intent(this, ThemeActivity::class.java).also {
+                startActivity(it)
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -73,9 +99,10 @@ class MainActivity : AppCompatActivity() {
         binding.PB.visibility = if (state) View.VISIBLE else View.GONE
     }
 
-    private fun navigateToDetailUser(username: String) {
+    private fun navigateToDetailUser(username: String, avatarUrl: String) {
         val intent = Intent(this@MainActivity, DetailUserActivity::class.java)
         intent.putExtra(DetailUserActivity.EXTRA_USERNAME, username)
+        intent.putExtra(DetailUserActivity.EXTRA_AVATAR_URL, avatarUrl)
         startActivity(intent)
     }
 }
